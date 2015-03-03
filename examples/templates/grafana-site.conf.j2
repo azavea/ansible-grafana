@@ -1,0 +1,6 @@
+server {
+  listen 8000;
+  location / {
+    root {{ grafana_prefix }}/grafana-{{ grafana_version }};
+  }
+}

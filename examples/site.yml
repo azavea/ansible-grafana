@@ -1,0 +1,44 @@
+---
+- hosts: all
+
+  vars:
+    java_version: "7u75-*"
+    collectd_load_plugins:
+      - cpu
+      - df
+      - disk
+      - interface
+      - memory
+      - write_graphite
+    apache_port: 8080
+
+  pre_tasks:
+    - name: Update APT cache
+      apt: update_cache=yes
+
+  roles:
+    - { role: "azavea.graphite" }
+    - { role: "azavea.grafana" }
+    - { role: "azavea.nginx", nginx_delete_default_site: True }
+
+  tasks:
+    - name: Configure Collectd plugins
+      template: src=templates/{{ item }}.conf.j2 dest=/etc/collectd/collectd.conf.d/{{ item }}.conf
+      with_items:
+        - df
+        - write_graphite
+      notify:
+        - Restart Collectd
+
+    - name: Configure Grafana site
+      template: src=templates/grafana-site.conf.j2
+                dest=/etc/nginx/sites-available/grafana-site.conf
+      notify:
+        - Restart Nginx
+
+    - name: Enable Grafana site
+      file: src=/etc/nginx/sites-available/grafana-site.conf
+            dest=/etc/nginx/sites-enabled/grafana-site
+            state=link
+      notify:
+        - Restart Nginx

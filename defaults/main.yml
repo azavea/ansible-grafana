@@ -1,0 +1,7 @@
+---
+grafana_version: "1.9.1"
+grafana_prefix: "/opt"
+grafana_graphite_url: "http://localhost:8080"
+grafana_elasticsearch_url: "http://localhost:9200"
+grafana_elasticsearch_index: "grafana-dash"
+grafana_search_max_results: 100
