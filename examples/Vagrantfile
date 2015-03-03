@@ -1,0 +1,29 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+# Ensure role dependencies are in place
+if [ "up", "provision" ].include?(ARGV.first) && File.directory?("roles") &&
+  !(File.directory?("roles/azavea.elasticsearch") || File.symlink?("roles/azavea.elasticsearch")) ||
+  !(File.directory?("roles/azavea.nginx") || File.symlink?("roles/azavea.nginx")) ||
+  !(File.directory?("roles/azavea.graphite") || File.symlink?("roles/azavea.graphite"))
+  system("ansible-galaxy install --force -r roles.txt -p roles")
+end
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "ubuntu/trusty64"
+
+  config.vm.network "forwarded_port", guest: 8000, host: 8000
+  config.vm.network "forwarded_port", guest: 8080, host: 8080
+  config.vm.network "forwarded_port", guest: 9200, host: 9200
+
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 1024
+  end
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "site.yml"
+    ansible.sudo = true
+  end
+end

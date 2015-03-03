@@ -1,0 +1,14 @@
+---
+- name: Download Grafana
+  get_url: url=http://grafanarel.s3.amazonaws.com/grafana-{{ grafana_version }}.tar.gz
+           dest=/usr/local/src/grafana-{{ grafana_version }}.tar.gz
+
+- name: Extract and install Grafana
+  unarchive: src=/usr/local/src/grafana-{{ grafana_version }}.tar.gz
+             dest={{ grafana_prefix }}
+             copy=no
+             creates={{ grafana_prefix }}/grafana-{{ grafana_version }}
+
+- name: Configure Grafana
+  template: src=config.js.j2
+            dest={{ grafana_prefix }}/grafana-{{ grafana_version }}/config.js
