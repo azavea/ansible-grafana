@@ -2,7 +2,7 @@
 - hosts: all
 
   vars:
-    java_version: "7u75-*"
+    java_version: "7u79-*"
     collectd_load_plugins:
       - cpu
       - df
@@ -19,7 +19,6 @@
   roles:
     - { role: "azavea.graphite" }
     - { role: "azavea.grafana" }
-    - { role: "azavea.nginx", nginx_delete_default_site: True }
 
   tasks:
     - name: Configure Collectd plugins
@@ -29,16 +28,3 @@
         - write_graphite
       notify:
         - Restart Collectd
-
-    - name: Configure Grafana site
-      template: src=templates/grafana-site.conf.j2
-                dest=/etc/nginx/sites-available/grafana-site.conf
-      notify:
-        - Restart Nginx
-
-    - name: Enable Grafana site
-      file: src=/etc/nginx/sites-available/grafana-site.conf
-            dest=/etc/nginx/sites-enabled/grafana-site
-            state=link
-      notify:
-        - Restart Nginx

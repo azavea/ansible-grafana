@@ -1,7 +1,33 @@
 ---
-grafana_version: "1.9.1"
-grafana_prefix: "/opt"
-grafana_graphite_url: "http://localhost:8080"
-grafana_elasticsearch_url: "http://localhost:9200"
-grafana_elasticsearch_index: "grafana-dash"
-grafana_search_max_results: 100
+grafana_version: "2.0.2"
+grafana_data: "/var/lib/grafana"
+grafana_logs: "/var/log/grafana"
+grafana_http_addr: "127.0.0.1"
+grafana_http_port: 3000
+grafana_domain: "localhost"
+grafana_root_url: "%(protocol)s://%(domain)s:%(http_port)s/"
+grafana_router_logging: "false"
+
+grafana_database_type: "sqlite3"
+grafana_database_path: "grafana.db"
+
+grafana_session_provider: "memory"
+
+grafana_analytics_reporting_enabled: "true"
+
+grafana_security_admin_user: "admin"
+grafana_security_admin_password: "admin"
+grafana_security_secret_key: "{{ grafana_security_admin_password | md5 }}"
+
+grafana_users_allow_sign_up: "true"
+grafana_users_allows_org_create: "true"
+grafana_users_auto_assign_org: "true"
+grafana_users_auto_assign_org_role: "Viewer"
+
+grafana_auth_anonymous_enabled: "false"
+grafana_auth_anonymous_org_name: "Main Org."
+grafana_auth_anonymous_org_role: "Viewer"
+
+grafana_log_mode: "console"
+grafana_log_buffer_len: 10000
+grafana_log_level: "Info"

@@ -1,3 +1,1 @@
 azavea.graphite,0.4.0
-azavea.elasticsearch,0.2.0
-azavea.nginx,0.2.0

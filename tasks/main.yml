@@ -1,14 +1,18 @@
 ---
-- name: Download Grafana
-  get_url: url=http://grafanarel.s3.amazonaws.com/grafana-{{ grafana_version }}.tar.gz
-           dest=/usr/local/src/grafana-{{ grafana_version }}.tar.gz
+- name: Configure the PackageCloud APT key
+  apt_key: url=https://packagecloud.io/gpg.key state=present
 
-- name: Extract and install Grafana
-  unarchive: src=/usr/local/src/grafana-{{ grafana_version }}.tar.gz
-             dest={{ grafana_prefix }}
-             copy=no
-             creates={{ grafana_prefix }}/grafana-{{ grafana_version }}
+- name: Configure the Grafana APT repository
+  apt_repository: repo="deb https://packagecloud.io/grafana/stable/debian/ wheezy main"
+                  state=present
+
+- name: Install Grafana
+  apt: pkg=grafana={{ grafana_version }} state=present
 
 - name: Configure Grafana
-  template: src=config.js.j2
-            dest={{ grafana_prefix }}/grafana-{{ grafana_version }}/config.js
+  template: src=grafana.ini.j2 dest=/etc/grafana/grafana.ini
+  notify:
+    - Restart Grafana
+
+- name: Enable Grafana service
+  service: name=grafana-server enabled=yes state=started
